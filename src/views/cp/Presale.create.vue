@@ -610,15 +610,6 @@ export default {
         this.presaleIsValid = this.socialsIsValid && this.settingsIsValid && this.liquidityIsValid && this.tokenomicsIsValid;
       }
     },
-    tokenPriceETH: {
-      handler: async function() {
-        if (this.tokenPriceETH > 0) {
-          await axios.get(process.env.VUE_APP_KRAKEN_API).then(response => {
-            this.tokenPriceDollar = (this.tokenPriceETH * Number(response.data.result.XETHZUSD.c[0]));
-          });
-        }
-      }
-    }
   }
 };
 </script>

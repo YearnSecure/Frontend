@@ -378,6 +378,7 @@ export default {
       tokensInPresale: 0,
       liquidityTokens: 0,
       presale: {
+        finishedPresale: false,
         chartData: {
           datasets: [
             {
@@ -546,7 +547,7 @@ export default {
       
       presaleContractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
         await presaleContractInterface.methods.GetEthContributedForAddress(this.id, this.account).call().then((response) => {
-          if (response == 0){
+          if (response === 0){
             this.presale.UserContribution = 0;
             this.presale.Roi = 0;
           } else {
@@ -567,11 +568,10 @@ export default {
       tokenContractInterface.options.address = this.presale.TokenAddress;
         await tokenContractInterface.methods.symbol().call().then((response) => {
           this.presale.TokenName = response;          
-            })
-            .catch((e) => {
-              console.log('error:' + e);
-            });
-    
+        })
+        .catch((e) => {
+          console.log('error:' + e);
+        });
     },
     getRoi: async function() {
       const presaleContractAbi = this.contractAbi;
@@ -582,10 +582,10 @@ export default {
         await presaleContractInterface.methods.GetAmountOfTokensForAddress(this.id, this.account).call().then((response) => {
           this.presale.Roi = web3.utils.fromWei(response);
           
-            })
-            .catch((e) => {
-              console.log('error:' + e);
-            });
+        })
+        .catch((e) => {
+          console.log('error:' + e);
+        });
     },
     queryPresaleData: async function() {
       const response = await axios.get(`${process.env.VUE_APP_SERVICE}/presale/${this.id}`);
@@ -641,7 +641,10 @@ export default {
       const tokenContractInterface = new web3.eth.Contract(tokenContractAbi);
       
       tokenContractInterface.options.address = this.presale.TokenAddress;
-        await tokenContractInterface.methods.approve(process.env.VUE_APP_PRESALE_CONTRACT_ETH, this.presale.TotalTokenAmount).send({from: this.account}).then()
+        await tokenContractInterface.methods
+            .approve(process.env.VUE_APP_PRESALE_CONTRACT_ETH, this.presale.TotalTokenAmount)
+            .send({from: this.account})
+            .then()
             .catch((e) => {
               console.log('error:' + e);
             });
