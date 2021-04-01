@@ -547,7 +547,7 @@ export default {
       
       presaleContractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
         await presaleContractInterface.methods.GetEthContributedForAddress(this.id, this.account).call().then((response) => {
-          if (response === 0){
+          if (response == 0){
             this.presale.UserContribution = 0;
             this.presale.Roi = 0;
           } else {
