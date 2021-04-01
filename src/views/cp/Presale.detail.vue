@@ -388,20 +388,27 @@ export default {
         TotalSupply: null,
         TotalTokenAmount: null,
         TokensInPresale: null,
-        finishedPresale: false,
-        CurrentStep: 0,
-        TokenOwnerAddress: 0,
+        RawTokensInPresale: null,
         TokenLiquidity: null,
         TokenPrice: null,
         TotalContributed: null,
+        TokenOwnerAddress: 0,
         EthDistributable: null,
         TokenTimeLock: null,
-        listingPrice: null,
+        CurrentStep: 0,
         Github: null,
         Medium: null,
         Telegram: null,
         Website: null,
         Twitter: null,
+        allocations: [],
+        UserContribution: null,
+        Roi: null,
+        TokenName: null,
+        finished: false,
+        started: false,
+        SoftCapMet: false,
+        listingPrice: null,
         chartData: {
           datasets: [
             {
@@ -472,7 +479,7 @@ export default {
     }
     if (parseInt(this.presale.CurrentStep) === 1){
       await this.getPresaleFinished();
-      if (!this.presale.finishedPresale){
+      if (!this.presale.finished){
         await this.getPresaleStarted();
       }
     }
@@ -615,36 +622,6 @@ export default {
             console.log(e.request);
           });
     },
-    queryPresaleData: async function() {
-      const response = await axios.get(`${process.env.VUE_APP_SERVICE}/presale/${this.id}`);
-      if (response.status !== 200)
-        return this.showError(response);
-
-      const presale = response.data.presale;
-      presale.chartData = {};
-      presale.chartData.datasets = [];
-      const dataset = {
-        data: [],
-        backgroundColor: [
-          '#db7d02',
-          '#f78c00',
-          '#f49d2c',
-          '#f2a541',
-          '#f9af4d',
-          '#f9b761',
-        ],
-      }
-      presale.chartData.datasets.push(dataset);
-
-      this.presale = presale;
-    },
-    getPresalesGraph: async function() {
-      if (this.presale.tokens && this.presale.tokens.length > 0) {
-        for (let index = 0; index < this.presale.tokens.length; index++) {
-          this.presale.chartData.datasets[0].data.push(Number(this.presale.tokens[index].liquidity));
-        }
-      }
-    },
     getTokenPrice: function() {
       return parseInt(this.presale.Hardcap)/(parseInt(this.presale.RawTokensInPresale));
     },
@@ -653,11 +630,8 @@ export default {
       const web3 = new Web3(this.provider);
       const tokenContractInterface = new web3.eth.Contract(tokenContractAbi);
 
-      
       tokenContractInterface.options.address = this.presale.TokenAddress;
       await tokenContractInterface.methods.allowance(this.account, process.env.VUE_APP_PRESALE_CONTRACT_ETH).call().then((response) => {
-        console.log(response);
-        console.log(this.presale.TotalTokenAmount);
         this.allowanceState = response;
       }).catch((e) => {
         console.log('error:' + e);
