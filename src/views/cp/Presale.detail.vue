@@ -453,6 +453,7 @@ export default {
       }
     }
 
+    await this.getEthPrice();
     await this.getTokenAllocations();
 
     this.setProgressBar();
@@ -573,6 +574,7 @@ export default {
             });
     
     },
+
     getRoi: async function() {
       const presaleContractAbi = this.contractAbi;
       const web3 = new Web3(this.provider);
@@ -587,6 +589,7 @@ export default {
               console.log('error:' + e);
             });
     },
+    
     queryPresaleData: async function() {
       const response = await axios.get(`${process.env.VUE_APP_SERVICE}/presale/${this.id}`);
       if (response.status !== 200)
@@ -617,9 +620,19 @@ export default {
         }
       }
     },
+    getEthPrice: async function() {
+      const response = await axios.get(process.env.VUE_APP_KRAKEN_API);
+
+      if (response.status === 200)
+        return response.data.result.XETHZUSD.c[0];
+      else
+        this.showError('Ethereum price not fetched.',
+            'Something went wrong fetching Ethereum price, please try again');
+    },
     getTokenPrice: function() {
       return parseInt(this.presale.Hardcap)/(parseInt(this.presale.RawTokensInPresale));
     },
+
     getAllowance: async function (){
       const tokenContractAbi = this.tokenAbi;
       const web3 = new Web3(this.provider);
