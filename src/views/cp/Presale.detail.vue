@@ -547,7 +547,8 @@ export default {
       
       presaleContractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
         await presaleContractInterface.methods.GetEthContributedForAddress(this.id, this.account).call().then((response) => {
-          if (response == 0){
+          console.log(parseInt(response))
+          if (parseInt(response) === 0){
             this.presale.UserContribution = 0;
             this.presale.Roi = 0;
           } else {
@@ -570,7 +571,7 @@ export default {
           this.presale.TokenName = response;          
         })
         .catch((e) => {
-          console.log('error:' + e);
+          console.log(e.request);
         });
     },
     getRoi: async function() {
@@ -579,13 +580,15 @@ export default {
       const presaleContractInterface = new web3.eth.Contract(presaleContractAbi);
       
       presaleContractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
-        await presaleContractInterface.methods.GetAmountOfTokensForAddress(this.id, this.account).call().then((response) => {
-          this.presale.Roi = web3.utils.fromWei(response);
-          
-        })
-        .catch((e) => {
-          console.log('error:' + e);
-        });
+        await presaleContractInterface.methods.GetAmountOfTokensForAddress(this.id, this.account)
+          .call()
+          .then((response) => {
+            console.log(response)
+            this.presale.Roi = web3.utils.fromWei(response);
+          })
+          .catch((e) => {
+            console.log(e.request);
+          });
     },
     queryPresaleData: async function() {
       const response = await axios.get(`${process.env.VUE_APP_SERVICE}/presale/${this.id}`);
