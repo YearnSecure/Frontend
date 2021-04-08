@@ -206,7 +206,7 @@ export default {
       await tokenInterface.methods.balanceOf(this.account)
         .call()
         .then((response) => {
-          this.yieldPoolAmount = web3.utils.fromWei(response);
+          this.yieldPoolAmount = parseFloat(web3.utils.fromWei(response)).toFixed(5);
         });
     },
     approve: async function() {
@@ -334,15 +334,15 @@ export default {
     },
     getTotalYsecStaked: async function(contractInterface) {
       const web3 = new Web3;
-      this.yieldPool.totalYsecStaked = web3.utils.fromWei(await contractInterface.methods.TotalStaked().call());
+      this.yieldPool.totalYsecStaked = parseFloat(web3.utils.fromWei(await contractInterface.methods.TotalStaked().call())).toFixed(5);
     },
     getAccountYsecStaked: async function(contractInterface) {
       const web3 = new Web3;
-      this.yieldPool.accountYsecStaked = web3.utils.fromWei(await contractInterface.methods.GetStakedAmount(this.account).call());
+      this.yieldPool.accountYsecStaked = parseFloat(web3.utils.fromWei(await contractInterface.methods.GetStakedAmount(this.account).call())).toFixed(5);
     },
     getRewards: async function(contractInterface) {
       const web3 = new Web3;
-      this.yieldPool.rewards = web3.utils.fromWei(await contractInterface.methods.Earned(this.account).call());
+      this.yieldPool.rewards = parseFloat(web3.utils.fromWei(await contractInterface.methods.Earned(this.account).call())).toFixed(5);
     },
     getEthInPool: async function() {
       const web3 = new Web3(this.provider);
@@ -355,7 +355,7 @@ export default {
               'Reading balance',
               true);
         } else {
-          ethInPool = web3.utils.fromWei(result);
+          ethInPool = parseFloat(web3.utils.fromWei(result)).toFixed(5);
         }
       });
 
