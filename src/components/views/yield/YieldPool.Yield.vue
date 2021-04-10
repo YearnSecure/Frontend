@@ -58,7 +58,7 @@
           </div>
           <div class="flex-root pt-2 pb-2 pl-6 rounded-bl-lg rounded-br-lg bg-yellow-500 text-center">
             <h1 class="inline-block">
-              <span class="block text-base text-white font-semibold tracking-wide uppercase">Presale(s) launched</span>
+              <span class="block text-base text-white font-semibold tracking-wide uppercase">Presales launched</span>
             </h1>
           </div>
         </li>
@@ -70,7 +70,7 @@
           </div>
           <div class="flex-root pt-2 pb-2 pl-6 rounded-bl-lg rounded-br-lg bg-yellow-500 text-center">
             <h1 class="inline-block">
-              <span class="block text-base text-white font-semibold tracking-wide uppercase">Participant(s)</span>
+              <span class="block text-base text-white font-semibold tracking-wide uppercase">Participants</span>
             </h1>
           </div>
         </li>
@@ -102,7 +102,7 @@
               <span class="text-white">Claim</span>
             </button>
             <button v-if="yieldPool.accountYsecStaked && yieldPool.accountYsecStaked > 0"
-                    v-on:click="unStake" class="flex-1 ml-3 py-2 px-4 m-auto rounded bg-transparent border border-white hover:bg-yellow-500 hover:border-yellow-500 hover:text-yellow-500">
+                    v-on:click="unStake" class="flex-1 ml-3 py-2 px-4 m-auto rounded bg-yellow-500 dark:bg-transparent border border-white hover:bg-yellow-500 hover:border-yellow-500 hover:text-yellow-500">
               <span class="text-white">Unstake</span>
             </button>
           </div>
