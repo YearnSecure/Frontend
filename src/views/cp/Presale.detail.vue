@@ -837,6 +837,7 @@ export default {
           });
     },
     contributeTokens: async function(x) {
+      this.$loading(true);
       const presaleContractAbi = this.contractAbi;
       const web3 = new Web3(this.provider);
       const presaleContractInterface = new web3.eth.Contract(presaleContractAbi);
