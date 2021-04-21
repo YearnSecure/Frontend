@@ -5,7 +5,7 @@ export default {
   install(Vue, opts) {
     opts = {
       loading: false
-  };
+    };
 
     const loadingPlugin = Vue.extend( Loading );
     vm = new loadingPlugin({
