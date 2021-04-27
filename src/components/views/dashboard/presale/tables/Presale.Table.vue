@@ -38,7 +38,7 @@
               <tr v-for="(presale, key) in presales" :key="key">
                 <td class="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                   <div class="flex space-x-3">
-                    <a href="#" class="truncate hover:text-gray-600">
+                    <a v-on:click="showPresale(presale)" class="truncate cursor-pointer hover:text-yellow-500">
                       <span>
                         {{ presale.name }}
                         <br>
@@ -48,70 +48,56 @@
                 </td>
                 <td class="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                   <div class="space-x-3">
-                    <a href="#" class="truncate hover:text-gray-600">
-                      <span>
-                        {{ formatDate(presale.startDate) }}
-                      </span>
-                    </a>
+                    <span class="truncate hover:text-gray-600">
+                      {{ formatDate(presale.startDate) }}
+                    </span>
                   </div>
                 </td>
                 <td class="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                   <div class="items-center space-x-3">
-                    <a href="#" class="truncate hover:text-gray-600">
-                      <span>
-                        {{ formatDate(presale.endDate) }}
-                      </span>
-                    </a>
+                    <span class="truncate hover:text-gray-600">
+                      {{ formatDate(presale.endDate) }}
+                    </span>
                   </div>
                 </td>
                 <td class="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                   <div class="space-x-3">
-                    <a href="#" class="truncate hover:text-gray-600">
-                      <span>
-                        {{ presale.liquidityPercentage }}%
-                      </span>
-                    </a>
+                    <span class="truncate hover:text-gray-600">
+                      {{ presale.liquidityPercentage }}%
+                    </span>
                   </div>
                 </td>
                 <td class="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                   <div class="items-center space-x-3">
-                    <a href="#" class="truncate hover:text-gray-600">
-                      <span>
-                        {{ parseToWei(presale.amountOfTokensLocked) }}
-                      </span>
-                    </a>
+                    <span class="truncate hover:text-gray-600">
+                      {{ parseToWei(presale.amountOfTokensLocked) }}
+                    </span>
                   </div>
                 </td>
                 <td class="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                   <div class="items-center space-x-3">
-                    <a href="#" class="truncate hover:text-gray-600">
-                      <span>
-                        {{ presale.softcapInEth }} ETH
-                      </span>
-                    </a>
+                    <span class="truncate hover:text-gray-600">
+                      {{ presale.softcapInEth }} ETH
+                    </span>
                   </div>
                 </td>
                 <td class="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                   <div class="items-center space-x-3">
-                    <a href="#" class="truncate hover:text-gray-600">
-                      <span>
-                       {{ presale.hardcapInEth }} ETH
-                      </span>
-                    </a>
+                    <span class="truncate hover:text-gray-600">
+                     {{ presale.hardcapInEth }} ETH
+                    </span>
                   </div>
                 </td>
                 <td class="px-6 py-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                   <div class="items-center space-x-3">
-                    <a href="#" class="truncate hover:text-gray-600">
-                      <span>
-                       {{ presale.contributedEth }} ETH
-                      </span>
-                    </a>
+                    <span class="truncate hover:text-gray-600">
+                     {{ presale.contributedEth }} ETH
+                    </span>
                   </div>
                 </td>
                 <td class="px-6 py-3 text-sm font-medium">
                   <div class="flex items-center space-x-3">
-                      <button v-on:click="showPresale(presale)" class="bg-yellow-500 rounded pl-3 pr-3 pt-2 pb-2 text-white">View</button>
+                    <button v-on:click="showPresale(presale)" class="bg-yellow-500 rounded pl-3 pr-3 pt-2 pb-2 text-white">View</button>
                   </div>
                 </td>
 <!--                <td class="px-6 py-3 text-sm font-medium">-->
