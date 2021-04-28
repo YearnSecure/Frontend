@@ -102,7 +102,6 @@ export default {
   props: {
     contractAddress: String,
     account: String,
-    chainId: String
   },
   components: {
     InitConnectWalletModal,
@@ -129,10 +128,19 @@ export default {
   computed: {
     ...mapGetters({ theme: "getTheme" }),
     network: function () {
-      if (this.chainId === '0x1')
-        return 'Main network';
-
-      return 'Custom network';
+      let network = 'Custom network';
+      switch (this.chainId) {
+        case '0x1':
+          network = 'ETH Main network'
+          break;
+        case '0x38':
+          network = 'BSC Main network'
+          break;
+        case '0x61':
+          network = 'BSC Test network'
+          break;
+      }
+      return network;
     }
   },
   watch: {

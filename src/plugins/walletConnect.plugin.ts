@@ -68,17 +68,14 @@ export default class WalletConnector {
         return this.tempWC.enable();
     }
     // Check which provider is connected
-    GetProvider(abi: any, address: any) {
+    GetProvider() {
         if(this.metamaskConnected) {
             return new Web3(this.metamaskProvider);
         } else if (this.walletConnectConnected){
             return new Web3(this.tempWC as any);
-        } else {
-            const web3 = new Web3(window.ethereum);
-            const contractInterface = new web3.eth.Contract(abi);
-            contractInterface.options.address = address;
-            return new Web3(new Web3.providers.HttpProvider(`${process.env.VUE_APP_RPC}/${process.env.VUE_APP_INFURA}`));
         }
+
+        return new Web3(new Web3.providers.HttpProvider(`${process.env.VUE_APP_RPC}/${process.env.VUE_APP_INFURA}`));
     }
     // Returns the connected accounts
     async GetAccounts() {

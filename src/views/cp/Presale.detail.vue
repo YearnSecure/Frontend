@@ -5,8 +5,7 @@
         <Header
             :contractAddress="contractAddress"
             :isConnected="isConnected"
-            :account="account"
-            :chainId="chainId" />
+            :account="account" />
 
         <AlertModal
             v-if="showAlert"
@@ -81,6 +80,7 @@ import TeamInformation from '@/components/views/presale/TeamInformation'
 import TokenInformation from '@/components/views/presale/TokenInformation'
 import PresaleInformation from '@/components/views/presale/PresaleInformation'
 import TokenAllocations from '@/components/views/presale/TokenAllocations'
+import PresaleActions from '@/components/views/presale/PresaleActions'
 
 import Chart from '@/components/views/dashboard/presale/charts/Presale.Chart'
 import Web3 from "web3";
@@ -97,6 +97,7 @@ export default {
     TokenInformation,
     PresaleInformation,
     TokenAllocations,
+    PresaleActions,
     Chart
   },
   data() {
@@ -190,14 +191,14 @@ export default {
         maintainAspectRatio: false
       },
       progressStyle: 'width: 0%',
-      progressPercentage: 0,
+      progressPercentage: "0",
       web3: null,
       contractInterface: null,
       tokenInterface: null,
       contractAbi: [{"inputs":[{"internalType":"address","name":"timelockFactoryAddress","type":"address"},{"internalType":"address","name":"yieldFeeAddress","type":"address"},{"internalType":"address","name":"feeAddress","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"presaleId","type":"uint256"},{"indexed":false,"internalType":"address","name":"claimer","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"ClaimedTokens","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"presaleId","type":"uint256"},{"indexed":false,"internalType":"address","name":"contributor","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Contributed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"presaleId","type":"uint256"},{"indexed":false,"internalType":"address","name":"reciever","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"EthDistributed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"presaleId","type":"uint256"},{"indexed":false,"internalType":"address","name":"reciever","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"EthFeeDistributed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"presaleId","type":"uint256"},{"indexed":false,"internalType":"address","name":"reciever","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"EthYieldFeeDistributed","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"NoTokensTransferedToLocks","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"presaleId","type":"uint256"},{"indexed":false,"internalType":"address","name":"contributor","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"RetrievedEth","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"presaleId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"RetrievedTokens","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"presaleId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"TokensTransfered","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"presaleId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"TokensTransferedToLocks","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"presaleId","type":"uint256"},{"indexed":false,"internalType":"bool","name":"permaLockedLiq","type":"bool"},{"indexed":false,"internalType":"uint256","name":"amountOfEth","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amountOfTokens","type":"uint256"}],"name":"UniswapLiquidityAdded","type":"event"},{"inputs":[],"name":"FeeAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"PresaleIndexer","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"Presales","outputs":[{"components":[{"internalType":"string","name":"Name","type":"string"},{"internalType":"string","name":"Website","type":"string"},{"internalType":"string","name":"Telegram","type":"string"},{"internalType":"string","name":"Twitter","type":"string"},{"internalType":"string","name":"Github","type":"string"},{"internalType":"string","name":"Medium","type":"string"}],"internalType":"struct PresaleInfo","name":"Info","type":"tuple"},{"internalType":"uint256","name":"StartDate","type":"uint256"},{"internalType":"uint256","name":"EndDate","type":"uint256"},{"internalType":"uint256","name":"Softcap","type":"uint256"},{"internalType":"uint256","name":"Hardcap","type":"uint256"},{"internalType":"uint256","name":"TokenLiqAmount","type":"uint256"},{"internalType":"uint256","name":"LiqPercentage","type":"uint256"},{"internalType":"uint256","name":"TokenPresaleAllocation","type":"uint256"},{"internalType":"bool","name":"PermalockLiq","type":"bool"},{"components":[{"internalType":"string","name":"Name","type":"string"},{"internalType":"uint256","name":"Amount","type":"uint256"},{"internalType":"uint256","name":"RemainingAmount","type":"uint256"},{"internalType":"uint256","name":"ReleaseDate","type":"uint256"},{"internalType":"bool","name":"IsInterval","type":"bool"},{"internalType":"uint256","name":"PercentageOfRelease","type":"uint256"},{"internalType":"uint256","name":"IntervalOfRelease","type":"uint256"},{"internalType":"bool","name":"Exists","type":"bool"},{"internalType":"address","name":"Token","type":"address"}],"internalType":"struct TokenAllocation","name":"LiquidityTokenAllocation","type":"tuple"},{"components":[{"internalType":"address","name":"TokenOwnerAddress","type":"address"},{"internalType":"address","name":"TokenAddress","type":"address"},{"internalType":"address","name":"TokenTimeLock","type":"address"}],"internalType":"struct PresaleDataAddresses","name":"Addresses","type":"tuple"},{"components":[{"internalType":"uint256","name":"TotalTokenAmount","type":"uint256"},{"internalType":"uint256","name":"Step","type":"uint256"},{"internalType":"uint256","name":"ContributedEth","type":"uint256"},{"internalType":"uint256","name":"RaisedFeeEth","type":"uint256"},{"internalType":"bool","name":"Exists","type":"bool"},{"internalType":"uint256","name":"RetrievedTokenAmount","type":"uint256"},{"internalType":"uint256","name":"RetrievedEthAmount","type":"uint256"},{"internalType":"uint256","name":"NumberOfContributors","type":"uint256"}],"internalType":"struct PresaleDataState","name":"State","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"TimelockFactoryAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"UniswapFactoryAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"UniswapRouterAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"YieldFeeAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"timelockFactoryAddress","type":"address"}],"name":"SetTimelockFactory","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"yieldFeeAddress","type":"address"}],"name":"SetYieldFeeAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"feeAddress","type":"address"}],"name":"SetFeeAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"router","type":"address"}],"name":"SetUniswapRouterAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"router","type":"address"}],"name":"SetUniswapFactoryAddress","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"components":[{"internalType":"string","name":"Name","type":"string"},{"internalType":"uint256","name":"StartDate","type":"uint256"},{"internalType":"uint256","name":"EndDate","type":"uint256"},{"internalType":"uint256","name":"Softcap","type":"uint256"},{"internalType":"uint256","name":"Hardcap","type":"uint256"},{"internalType":"uint256","name":"TokenLiqAmount","type":"uint256"},{"internalType":"uint256","name":"LiqPercentage","type":"uint256"},{"internalType":"uint256","name":"TokenPresaleAllocation","type":"uint256"},{"internalType":"bool","name":"PermalockLiq","type":"bool"},{"components":[{"internalType":"string","name":"Name","type":"string"},{"internalType":"uint256","name":"Amount","type":"uint256"},{"internalType":"uint256","name":"RemainingAmount","type":"uint256"},{"internalType":"uint256","name":"ReleaseDate","type":"uint256"},{"internalType":"bool","name":"IsInterval","type":"bool"},{"internalType":"uint256","name":"PercentageOfRelease","type":"uint256"},{"internalType":"uint256","name":"IntervalOfRelease","type":"uint256"},{"internalType":"bool","name":"Exists","type":"bool"},{"internalType":"address","name":"Token","type":"address"}],"internalType":"struct TokenAllocation[]","name":"TokenAllocations","type":"tuple[]"},{"components":[{"internalType":"string","name":"Name","type":"string"},{"internalType":"uint256","name":"Amount","type":"uint256"},{"internalType":"uint256","name":"RemainingAmount","type":"uint256"},{"internalType":"uint256","name":"ReleaseDate","type":"uint256"},{"internalType":"bool","name":"IsInterval","type":"bool"},{"internalType":"uint256","name":"PercentageOfRelease","type":"uint256"},{"internalType":"uint256","name":"IntervalOfRelease","type":"uint256"},{"internalType":"bool","name":"Exists","type":"bool"},{"internalType":"address","name":"Token","type":"address"}],"internalType":"struct TokenAllocation","name":"LiquidityTokenAllocation","type":"tuple"},{"internalType":"address","name":"Token","type":"address"},{"internalType":"string","name":"Website","type":"string"},{"internalType":"string","name":"Telegram","type":"string"},{"internalType":"string","name":"Twitter","type":"string"},{"internalType":"string","name":"Github","type":"string"},{"internalType":"string","name":"Medium","type":"string"}],"internalType":"struct PresaleSettings","name":"settings","type":"tuple"}],"name":"CreatePresale","outputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"TransferTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"Contribute","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"},{"internalType":"address","name":"contributor","type":"address"}],"name":"RetrieveEth","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"RetrieveTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"TransferTokensToLocks","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"AddUniswapLiquidity","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"ClaimTokens","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"DistributeEth","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"PresaleStarted","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"PresaleFinished","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"SoftcapMet","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"HardcapMet","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PresaleIndexerLength","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"GetTokenAllocations","outputs":[{"components":[{"internalType":"string","name":"Name","type":"string"},{"internalType":"uint256","name":"Amount","type":"uint256"},{"internalType":"uint256","name":"RemainingAmount","type":"uint256"},{"internalType":"uint256","name":"ReleaseDate","type":"uint256"},{"internalType":"bool","name":"IsInterval","type":"bool"},{"internalType":"uint256","name":"PercentageOfRelease","type":"uint256"},{"internalType":"uint256","name":"IntervalOfRelease","type":"uint256"},{"internalType":"bool","name":"Exists","type":"bool"},{"internalType":"address","name":"Token","type":"address"}],"internalType":"struct TokenAllocation[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"},{"internalType":"address","name":"forAddress","type":"address"}],"name":"GetEthContributedForAddress","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"},{"internalType":"address","name":"forAddress","type":"address"}],"name":"GetAmountOfTokensForAddress","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"},{"internalType":"address","name":"forAddress","type":"address"}],"name":"GetHardcapAmountOfTokensForAddress","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"GetRatio","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"presaleId","type":"uint256"}],"name":"GetNumberOfContributors","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}],
       tokenAbi: [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_spender","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"}]
     }
-  }, 
+  },
   mounted: async function () {
     this.$loading(true);
     this.walletConnector = new WalletConnector(window.ethereum);
@@ -227,32 +228,44 @@ export default {
         this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
         this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       } else {
-        this.web3 = this.walletConnector.GetProvider(this.contractAbi, process.env.VUE_APP_PRESALE_CONTRACT_ETH);
+        this.web3 = this.walletConnector.GetProvider();
         this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
         this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       }
+
+      await this.loadAccounts();
     },
     initTokenContract: async function() {
+      this.web3 = new Web3(this.provider);
       this.tokenInterface = new this.web3.eth.Contract(this.tokenAbi);
       this.tokenInterface.options.address = this.presale.TokenAddress;
     },
     initDetailPage: async function() {
       await this.getTokenTicker();
-      await this.getContributedEth();
       await this.getSoftcapMet();
-      if (this.account.toLowerCase() === this.presale.TokenOwnerAddress.toLowerCase()){
+
+      if (this.account !== "" && this.account.toLowerCase() === this.presale.TokenOwnerAddress.toLowerCase()){
         await this.getAllowance();
+        await this.getContributedEth();
       }
+
       if (parseInt(this.presale.CurrentStep) === 1){
         await this.getPresaleFinished();
         if (!this.presale.finished){
           await this.getPresaleStarted();
         }
       }
-
       await this.getTokenAllocations();
-
       this.setProgressBar();
+    },
+    loadAccounts: async function() {
+      const wallet = await this.walletConnector.GetAccounts();
+      if (wallet !== undefined) {
+        this.account = wallet[0];
+        this.$store.state.account = wallet[0];
+        this.chainId = await this.walletConnector.GetChainId();
+        this.isConnected = true;
+      }
     },
     getPresaleData: async function() {
       this.web3 = new Web3(this.provider);
@@ -304,6 +317,9 @@ export default {
       });
     },
     getTokenAllocations: async function() {
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.GetTokenAllocations(this.id)
       .call()
       .then((response) => {
@@ -331,6 +347,9 @@ export default {
       });
     },
     getContributedEth: async function() {
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.GetEthContributedForAddress(this.id, this.account)
       .call()
       .then((response) => {
@@ -347,6 +366,9 @@ export default {
       });
     },
     getTokenTicker: async function() {
+      this.web3 = new Web3(this.provider);
+      this.tokenInterface = new this.web3.eth.Contract(this.tokenAbi);
+      this.tokenInterface.options.address = this.presale.TokenAddress;
       await this.tokenInterface.methods.symbol()
       .call()
       .then((response) => {
@@ -357,6 +379,9 @@ export default {
       });
     },
     getRoi: async function() {
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.GetAmountOfTokensForAddress(this.id, this.account)
       .call()
       .then((response) => {
@@ -369,7 +394,10 @@ export default {
     getTokenPrice: function() {
       return parseInt(this.presale.Hardcap)/(parseInt(this.presale.RawTokensInPresale));
     },
-    getAllowance: async function (){
+    getAllowance: async function () {
+      this.web3 = new Web3(this.provider);
+      this.tokenInterface = new this.web3.eth.Contract(this.tokenAbi);
+      this.tokenInterface.options.address = this.presale.TokenAddress;
       await this.tokenInterface.methods.allowance(this.account, process.env.VUE_APP_PRESALE_CONTRACT_ETH)
         .call()
         .then((response) => {
@@ -380,6 +408,9 @@ export default {
     },
     approveCall: async function () {
       this.$loading(true);
+      this.web3 = new Web3(this.provider);
+      this.tokenInterface = new this.web3.eth.Contract(this.tokenAbi);
+      this.tokenInterface.options.address = this.presale.TokenAddress;
         await this.tokenInterface.methods
             .approve(process.env.VUE_APP_PRESALE_CONTRACT_ETH, this.presale.TotalTokenAmount)
             .send({from: this.account})
@@ -394,6 +425,9 @@ export default {
     },
     transferTokens: async function() {
       this.$loading(true);
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.TransferTokens(this.id)
       .send({from: this.account})
       .then(() => {
@@ -406,6 +440,9 @@ export default {
       });
     },
     getPresaleFinished: async function() {
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.PresaleFinished(this.id)
       .call({from: this.account})
       .then((response) => {
@@ -415,6 +452,9 @@ export default {
       });
     },
     getPresaleStarted: async function() {
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.PresaleStarted(this.id)
       .call({from: this.account})
       .then((response) => {
@@ -425,6 +465,9 @@ export default {
     },
     addUniswapLiquidity: async function () {
       this.$loading(true);
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.AddUniswapLiquidity(this.id)
       .send({from: this.account})
       .then(() => {
@@ -438,6 +481,9 @@ export default {
     },
     claimTokens: async function() {
       this.$loading(true);
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.ClaimTokens(this.id)
       .send({from: this.account})
       .then(() => {
@@ -451,6 +497,9 @@ export default {
     },
     distributeEth: async function() {
       this.$loading(true);
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.DistributeEth(this.id)
       .send({from: this.account})
       .then(() => {
@@ -464,6 +513,9 @@ export default {
     },
     retrieveEth: async function() {
       this.$loading(true);
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.RetrieveEth(this.id, this.account)
       .send({from: this.account})
       .then(() => {
@@ -477,6 +529,9 @@ export default {
     },
     retrieveTokensOwner: async function() {
       this.$loading(true);
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.RetrieveTokens(this.id)
       .send({from: this.account})
       .then(() => {
@@ -488,8 +543,11 @@ export default {
         this.$loading(false);
       });
     },
-    TransferTokensToLocks: async function() {
+    transferTokensToLocks: async function() {
       this.$loading(true);
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.TransferTokensToLocks(this.id)
       .send({from: this.account})
       .then(() => {
@@ -502,6 +560,9 @@ export default {
       });
     },
     getSoftcapMet: async function() {
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.SoftcapMet(this.id)
       .call({from: this.account})
       .then((response) => {
@@ -512,6 +573,9 @@ export default {
     },
     contributeTokens: async function(x) {
       this.$loading(true);
+      this.web3 = new Web3(this.provider);
+      this.contractInterface = new this.web3.eth.Contract(this.contractAbi);
+      this.contractInterface.options.address = process.env.VUE_APP_PRESALE_CONTRACT_ETH;
       await this.contractInterface.methods.Contribute(this.id)
       .send({from: this.account, value: this.web3.utils.toWei(x.toString())})
       .then(() => {
