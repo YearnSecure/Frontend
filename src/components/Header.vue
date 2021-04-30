@@ -10,7 +10,7 @@
           YSEC Token address: <a :href="`https://etherscan.io/address/${contractAddress}`" target="_blank" class="text-blue-500 hover:text-yellow-600 transiation duration-300">{{ contractAddress }}</a>
         </h1>
         <h3 v-if="isConnected" class="text-sm font-medium leading-4 text-gray-900 dark:text-white sm:truncate">
-          You are connected: <a :href="`https://etherscan.io/address/${account}`" target="_blank" class="text-yellow-500 hover:text-blue-600 transiation duration-300">{{ account }}</a>
+          You are connected: <a :href="`https://etherscan.io/address/${connectedWalletAddress}`" target="_blank" class="text-yellow-500 hover:text-blue-600 transiation duration-300">{{ connectedWalletAddress }}</a>
         </h3>
         <h4 v-if="isConnected" class="text-xs font-medium leading-4 text-green-600 sm:truncate">
           <span v-if="chainId">{{ network }}</span>
@@ -56,40 +56,91 @@
             </svg>
           </a>
         </div>
-        <!-- <button type="button" class="order-0 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-1 sm:ml-3">
-          Create
-        </button> -->
+        <button v-if="!isConnected" v-on:click="toggleInitWalletconnection" class="ml-8 uppercase
+              transition duration-500 ease-in-out
+              whitespace-nowrap inline-flex items-center justify-center
+              px-4 py-2 rounded-md shadow-sm
+              text-base font-medium text-white
+              bg-blue-400 hover:bg-blue-500">
+          Connect wallet
+        </button>
+        <button v-else-if="isConnected" v-on:click="toggleConnectedWalletModal" class="ml-8 uppercase
+              transition duration-500 ease-in-out
+              whitespace-nowrap inline-flex items-center justify-center
+              px-4 py-2 rounded-md shadow-sm
+              text-base font-medium text-white
+              bg-green-500">
+          {{ truncateString(connectedWalletAddress, 12) }}
+        </button>
       </div>
     </div>
+    <InitConnectWalletModal
+        class="z-30 absolute"
+        v-if="showModal"
+        @connectMetaMask="connectMetaMask"
+        @connectWalletConnect="connectWalletConnect"
+        @toggleModal="toggleInitWalletconnection"/>
+
+    <ConnectedWalletModal
+        class="z-30 absolute"
+        v-if="showConnectedWalletModal"
+        :chainId="chainId"
+        @disconnectWallet="disconnectWallet"
+        @toggleModal="toggleConnectedWalletModal"/>
   </div>  
 </template>
 
 <script>
+import Web3 from "web3";
 import { mapGetters } from "vuex";
+import InitConnectWalletModal from "@/components/modals/InitWalletConnection";
+import ConnectedWalletModal from "@/components/modals/ConnectedWallet";
+import WalletConnector from "@/plugins/walletConnect.plugin";
 
 export default {
   name: 'header.dashboard.components',
   props: {
     contractAddress: String,
-    isConnected: Boolean,
     account: String,
-    chainId: String
   },
-  data() {
-    return {
-      switchPlatformUrl: process.env.VUE_APP_BSC
-    }
+  components: {
+    InitConnectWalletModal,
+    ConnectedWalletModal
   },
+  data:() => ({
+    switchPlatformUrl: process.env.VUE_APP_BSC,
+    web3: new Web3(window.ethereum),
+    tokenPrice: null,
+    connectedWalletAddress: null,
+    walletConnector: null,
+    isConnected: false,
+    chainId: null,
+    showModal: false,
+    showConnectedWalletModal: false,
+  }),
   beforeMount: function(){
     this.$store.dispatch("initTheme");
+  },
+  mounted: async function() {
+    this.walletConnector = new WalletConnector(window.ethereum);
+    await this.initConnection();
   },
   computed: {
     ...mapGetters({ theme: "getTheme" }),
     network: function () {
-      if (this.chainId === '0x1')
-        return 'Main network';
-
-      return 'Custom network';
+      let network = 'Custom network';
+      switch (this.chainId) {
+        case '0x1':
+          network = 'ETH Main network'
+          break;
+        case '0x38':
+          network = 'BSC Main network'
+          break;
+        case '0x61':
+          network = 'BSC Test network'
+          break;
+      }
+      return network;
     }
   },
   watch: {
@@ -100,10 +151,75 @@ export default {
     },
   },
   methods: {
+    initConnection: async function() {
+      if(this.walletConnector.IsConnected()) {
+        await this.loadAccounts();
+      } else{
+        this.isConnected = false;
+      }
+    },
+    connectMetaMask: async function() {
+      this.walletConnector.ConnectMetaMask()
+      .then((response) => {
+        this.connectedWalletAddress = response[0];
+        this.$store.state.account =  response[0];
+        this.chainId = this.walletConnector.tempWC.chainId;
+        this.initConnection();
+        this.isConnected = true;
+      }).catch((e) => {
+        console.log(`Something went wrong:`, e);
+      }).finally(() => {
+        this.toggleInitWalletconnection();
+      });
+    },
+    connectWalletConnect: function() {
+      this.walletConnector.ConnectWalletConnect()
+      .then((response) => {
+        this.connectedWalletAddress = response[0];
+        this.$store.state.account = response[0];
+        this.chainId = this.walletConnector.tempWC.chainId;
+        this.isConnected = true;
+      }).catch((e) => {
+        console.log(`Something went wrong:`, e);
+      }).finally(() => {
+        this.toggleInitWalletconnection();
+      });
+    },
+    loadAccounts: async function() {
+      const wallet = await this.walletConnector.GetAccounts();
+      if (wallet !== undefined) {
+        this.connectedWalletAddress = wallet[0];
+        this.$store.state.account = wallet[0];
+        this.chainId = await this.walletConnector.GetChainId();
+        this.isConnected = true;
+      }
+    },
+    disconnectWallet: function() {
+      this.walletConnector.Disconnect();
+
+      this.connectedWallet = "";
+      this.$store.state.connectedWallet = "";
+      this.isConnected = false;
+      this.toggleConnectedWalletModal();
+    },
+    toggleConnectedWalletModal: function() {
+      this.showConnectedWalletModal = !this.showConnectedWalletModal;
+    },
+    toggleInitWalletconnection: function() {
+      this.showModal = !this.showModal;
+    },
+    truncateString: function(str, num) {
+      if (str !== undefined) {
+        if (str.length <= num) {
+          return str
+        }
+        return str.slice(0, num) + '...'
+      }
+    },
     setTheme: function() {
       this.$store.dispatch("toggleTheme");
-    }
-  }
+    },
+  },
 }
 </script>
 

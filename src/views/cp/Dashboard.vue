@@ -87,25 +87,15 @@ export default {
   },
   mounted: async function () {
     this.$loading(true);
-
-    if (this.provider === undefined) {
-      this.isLoaded = true;
-    }
-
-    if (!this.isLoaded) {
-      // Detect provider
-      await this.detectProvider();
-      // Connect to your account
-      await this.currentAccount();
-      this.isLoaded = true;
-    }
+    this.isLoaded = true;
 
     await this.getPresales();
-    this.$loading(false);
 
     const isMobile = ('ontouchstart' in document.documentElement && /mobi/i.test(navigator.userAgent));
     if (isMobile)
       this.showError('Mobile not yet supported','For the best experience, please visit our website on a laptop');
+
+    this.$loading(false);
   },
   methods: {
     getPresales: async function () {
@@ -186,65 +176,6 @@ export default {
       }
 
       await this.setPinnedPresales();
-    },
-    detectProvider: async function () {
-      // Great change MetaMask is not installed
-      if (this.provider === undefined) {
-        return this.showError(
-            'MetaMask is not installed.',
-            'It looks like the connection to the MetaMask wallet failed. Try connecting again.',
-            false,
-            true);
-      }
-
-      if (!this.provider.isMetaMask)
-        return this.showError(
-            'MetaMask connection failed.',
-            'It looks like the connection to the MetaMask wallet failed. Try connecting again.');
-    },
-    currentAccount: async function () {
-      // connect to MetaMask account
-      this.chainId = this.provider.chainId;
-      this.provider
-          .request({ method: 'eth_accounts' })
-          .then(this.handleAccountsChanged(this.provider._state.accounts))
-          .catch((err) => {
-            // Some unexpected error.
-            // For backwards compatibility reasons, if no accounts are available,
-            // eth_accounts will return an empty array.
-            this.showError(
-                'Unexpected error',
-                err);
-          });
-    },
-    handleAccountsChanged: function (accounts) {
-      if (accounts !== null && accounts.length === 0) {
-        // MetaMask is locked or the user has not connected any accounts
-        this.isConnected = false;
-        this.showError(
-          'No connections made',
-          'Click the connect button to connect your MetaMask account',
-          true);
-      } else {
-        this.$store.state.account = accounts[0];
-        this.account = accounts[0];
-        // show user that MetaMask is connected
-        this.isConnected = true;
-      }
-    },
-    connectAccount: function () {
-      this.provider
-        .request({ method: 'eth_requestAccounts' })
-        .then(this.handleAccountsChanged(this.provider._state.accounts))
-        .catch((err) => {
-          if (err.code === 4001) {
-            // EIP-1193 userRejectedRequest error
-            // If this happens, the user rejected the connection request.
-            this.showError('Please connect to MetaMask.', err.message);
-          } else {
-            this.showError('Something went wrong', err.message);
-          }
-        });
     },
     closeModal: function () { 
       this.showAlert = !this.showAlert;
