@@ -121,7 +121,7 @@ export default class WalletConnector {
     }
 
     // Contract Calls
-    async GetPresaleData(abi: any, id: any, address: string) {
+    async getPresaleData(id: any, address: string, abi: any) {
         const web3 = this.GetProvider();
         if(web3 != null) {
             const presaleContractInterface = new web3.eth.Contract(abi);
@@ -129,62 +129,158 @@ export default class WalletConnector {
             return await presaleContractInterface.methods.Presales(id).call();
         }
     }
-    async GetTokenSymbol(abi: any, address: string) {
-        const web3 = this.GetProvider();
 
+    async getTokenAllocations(id: any, address: string, abi: any,) {
+        const web3 = this.GetProvider();
         if(web3 != null) {
-            const tokenContractInterface = new web3.eth.Contract(abi);
-            tokenContractInterface.options.address = address;
+            const presaleContractInterface = new web3.eth.Contract(abi);
+            presaleContractInterface.options.address = address;
+            return await presaleContractInterface.methods.GetTokenAllocations(id).call();
+        }
+    }
+
+    async getContributedEth(id: any, account: string, address: string, abi: any) {
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const presaleContractInterface = new web3.eth.Contract(abi);
+            presaleContractInterface.options.address = address;
+            return await presaleContractInterface.methods.GetEthContributedForAddress(id, account).call();
+        }
+    }
+
+    async getTokenTicker(tokenAddress: string, tokenAbi: any) {
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const tokenContractInterface = new web3.eth.Contract(tokenAbi);
+            tokenContractInterface.options.address = tokenAddress;
             return await tokenContractInterface.methods.symbol().call();
         }
     }
-    async GetPresaleFinished(abi: any, address: string, id: any, account: any) {
-        const web3 = this.GetProvider();
 
+    async getRoi(id: any, account: string, address: string, abi: any) {
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const presaleContractInterface = new web3.eth.Contract(abi);
+            presaleContractInterface.options.address = address;
+            return await presaleContractInterface.methods.GetAmountOfTokensForAddress(id, account).call();
+        }
+    }
+
+    async getAllowance(account: string, address: string, tokenAddress: string, tokenAbi: any) {
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const tokenContractInterface = new web3.eth.Contract(tokenAbi);
+            tokenContractInterface.options.address = tokenAddress;
+            return await tokenContractInterface.methods.allowance(account, address).call();
+        }
+    }
+
+    async approveCall(account: string, address: string, totalTokens: any, tokenAddress: string, tokenAbi: any) {
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const tokenContractInterface = new web3.eth.Contract(tokenAbi);
+            tokenContractInterface.options.address = tokenAddress;
+            return await tokenContractInterface.methods.approve(address, totalTokens).send({from: account});
+        }
+    }
+
+    async transferTokens(id: any, account: string, address: string, abi: any) {
+        console.log(address);
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const presaleContractInterface = new web3.eth.Contract(abi);
+            presaleContractInterface.options.address = address;
+            return await presaleContractInterface.methods.TransferTokens(id).send({from: account});
+        }
+    }
+
+    async presaleFinished(id: any, account: string, address: string, abi: any) {
+        const web3 = this.GetProvider();
         if(web3 != null) {
             const presaleContractInterface = new web3.eth.Contract(abi);
             presaleContractInterface.options.address = address;
             return await presaleContractInterface.methods.PresaleFinished(id).call({from: account});
         }
     }
-    async GetPresaleStarted(abi: any, address: string, id: any, account: any) {
-        const web3 = this.GetProvider();
 
+    async getPresaleStarted(id: any, account: string, address: string, abi: any) {
+        const web3 = this.GetProvider();
         if(web3 != null) {
             const presaleContractInterface = new web3.eth.Contract(abi);
             presaleContractInterface.options.address = address;
-            return await presaleContractInterface.methods.PresaleStarted(id).call({from: account})
+            return await presaleContractInterface.methods.PresaleStarted(id).call({from: account});
         }
     }
-    async ClaimTokens(abi: any, id: any, address: string, account: any) {
+
+    async addLiquidity(id: any, account: string, address: string, abi: any) {
         const web3 = this.GetProvider();
         if(web3 != null) {
-            try {
-                const presaleContractInterface = new web3.eth.Contract(abi);
-                presaleContractInterface.options.address = address;
-                await presaleContractInterface.methods.ClaimTokens(id).send({from: account});
-            } catch(e) {
-                console.log('error: ' + e)
-            }
-
+            const presaleContractInterface = new web3.eth.Contract(abi);
+            presaleContractInterface.options.address = address;
+            return await presaleContractInterface.methods.AddUniswapLiquidity(id).send({from: account});
         }
     }
-    async ContributeTokens(abi: any, id: any, address: string, account: any, value: any) {
-        const web3 = this.GetProvider();
-        console.log('id in connector: ' + id);
-        console.log('address in connector: ' + address);
-        console.log('account in connector: ' + account);
-        console.log('amount in connector: ' + value);
-        if(web3 != null)
-        {
-            try {
-                const presaleContractInterface = new web3.eth.Contract(abi);
-                presaleContractInterface.options.address = address;
-                await presaleContractInterface.methods.Contribute(id).send({from: account, value: web3.utils.toWei(value.toString())});
-            } catch(e) {
-                console.log('error: ' + e)
-            }
 
+    async claimTokensAccount(id: any, account: string, address: string, abi: any) {
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const presaleContractInterface = new web3.eth.Contract(abi);
+            presaleContractInterface.options.address = address;
+            return await presaleContractInterface.methods.ClaimTokens(id).send({from: account});
+        }
+    }
+
+    async distribute(id: any, account: string, address: string, abi: any) {
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const presaleContractInterface = new web3.eth.Contract(abi);
+            presaleContractInterface.options.address = address;
+            return await presaleContractInterface.methods.DistributeEth(id).send({from: account});
+        }
+    }
+
+    async retrieve(id: any, account: string, address: string, abi: any) {
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const presaleContractInterface = new web3.eth.Contract(abi);
+            presaleContractInterface.options.address = address;
+            return await presaleContractInterface.methods.RetrieveEth(id, account).send({from: account});
+        }
+    }
+
+    async retrieveTokensOwner(id: any, account: string, address: string, abi: any) {
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const presaleContractInterface = new web3.eth.Contract(abi);
+            presaleContractInterface.options.address = address;
+            return await presaleContractInterface.methods.RetrieveTokens(id).send({from: account});
+        }
+    }
+
+    async transferTokensToLocks(id: any, account: string, address: string, abi: any) {
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const presaleContractInterface = new web3.eth.Contract(abi);
+            presaleContractInterface.options.address = address;
+            return await presaleContractInterface.methods.TransferTokensToLocks(id).send({from: account});
+        }
+    }
+
+    async getSoftcapMet(id: any, account: string, address: string, abi: any) {
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const presaleContractInterface = new web3.eth.Contract(abi);
+            presaleContractInterface.options.address = address;
+            return await presaleContractInterface.methods.SoftcapMet(id).call({from: account});
+        }
+    }
+
+    async contributeTokens(id: any, account: string, amountOfTokens: any, address: string, abi: any) {
+        const web3 = this.GetProvider();
+        if(web3 != null) {
+            const presaleContractInterface = new web3.eth.Contract(abi);
+            presaleContractInterface.options.address = address;
+            return await presaleContractInterface.methods.Contribute(id).send({from: account, value: web3.utils.toWei(amountOfTokens.toString())});
         }
     }
 }
