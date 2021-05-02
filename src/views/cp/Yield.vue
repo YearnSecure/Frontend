@@ -87,7 +87,15 @@ export default {
 
     this.walletConnector = new WalletConnector(window.ethereum);
     await this.initConnection();
-    await this.initYieldFarm();
+
+    if (this.isConnected) {
+      await this.initYieldFarm();
+    } else {
+      this.$notifications(
+          "Please connect your wallet",
+          "The Yield farm only works when you connected your wallet",
+      );
+    }
 
     this.$loading(false);
   },
