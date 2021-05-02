@@ -49,13 +49,6 @@
             </svg>
           </a>
         </div>
-        <div class="flex pl-1 pr-1">
-          <a class="theme" v-on:click="setTheme">
-            <svg class="h-6 w-6 text-gray-400 hover:text-yellow-400 dark:text-yellow-400 dark:hover:text-white transition duration-500 ease-in-out" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            </svg>
-          </a>
-        </div>
         <button v-if="!isConnected" v-on:click="toggleInitWalletconnection" class="ml-8 uppercase
               transition duration-500 ease-in-out
               whitespace-nowrap inline-flex items-center justify-center
@@ -137,28 +130,30 @@ export default {
     this.walletConnector = new WalletConnector(window.ethereum);
     await this.initConnection();
 
-    if (this.chainId !== process.env.VUE_APP_NETWORK_ID) {
-      let rightNetwork = '';
-      switch (process.env.VUE_APP_NETWORK_ID) {
-        case '0x1':
-          rightNetwork = 'ETH Main network'
-          break;
-        case '0x3':
-          rightNetwork = 'ETH Ropsten network'
-          break;
-        case '0x38':
-          rightNetwork = 'BSC Main network'
-          break;
-        case '0x61':
-          rightNetwork = 'BSC Test network'
-          break;
-      }
+    if (this.isConnected) {
+      if (this.chainId !== process.env.VUE_APP_NETWORK_ID) {
+        let rightNetwork = '';
+        switch (process.env.VUE_APP_NETWORK_ID) {
+          case '0x1':
+            rightNetwork = 'ETH Main network'
+            break;
+          case '0x3':
+            rightNetwork = 'ETH Ropsten network'
+            break;
+          case '0x38':
+            rightNetwork = 'BSC Main network'
+            break;
+          case '0x61':
+            rightNetwork = 'BSC Test network'
+            break;
+        }
 
-      this.alert = {
-        title: "You're connected to the wrong network",
-        msg: `Please switch from ${this.network} to the ${rightNetwork}.`
+        this.alert = {
+          title: "You're connected to the wrong network",
+          msg: `Please switch from ${this.network} to the ${rightNetwork}.`
+        }
+        this.toggleAlertModal();
       }
-      this.toggleAlertModal();
     }
   },
   computed: {

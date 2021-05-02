@@ -24,8 +24,6 @@ export default class WalletConnector {
     IsConnected() {
         this.metamaskConnected = this.IsMetamaskConnected();
         this.walletConnectConnected = this.IsWalletConnectConnected();
-        console.log('metamask connected: ' + this.metamaskConnected);
-        console.log('wc connected: ' + this.walletConnectConnected);
         return this.metamaskConnected || this.walletConnectConnected;
     }
     // Check if MetaMask is connected

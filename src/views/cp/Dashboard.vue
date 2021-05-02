@@ -18,9 +18,7 @@
             :type="3" />
         
         <PreSalesTable
-            :presales="presales"
-            @pinPresale="pinPresale"
-        />
+            :presales="presales" />
 
       </main>
     </transition>
