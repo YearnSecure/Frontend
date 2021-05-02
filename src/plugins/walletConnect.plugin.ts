@@ -304,6 +304,7 @@ export default class WalletConnector {
         }
     }
 
+    // Get balance of account
     async getAccountBalance(account: string, tokenAddress: string, tokenAbi: any) {
         const web3 = this.GetProvider();
         if(web3 != null) {
@@ -313,6 +314,7 @@ export default class WalletConnector {
         }
     }
 
+    // Stale YSEC tokens
     async stakeTokens(account: string, amountOfTokens: any, address: string, abi: any) {
         const web3 = this.GetProvider();
         if(web3 != null) {
@@ -322,6 +324,7 @@ export default class WalletConnector {
         }
     }
 
+    // Unstake YSEC token
     async unstakeTokens(account: string, address: string, abi: any) {
         const web3 = this.GetProvider();
         if(web3 != null) {
@@ -331,6 +334,7 @@ export default class WalletConnector {
         }
     }
 
+    // Claim rewards from pool
     async claimReward(account: string, address: string, abi: any) {
         const web3 = this.GetProvider();
         if(web3 != null) {
@@ -339,5 +343,4 @@ export default class WalletConnector {
             return await presaleContractInterface.methods.ClaimReward().send({from: account});
         }
     }
-
 }

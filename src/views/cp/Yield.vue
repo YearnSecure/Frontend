@@ -162,10 +162,10 @@ export default {
         .then((response) => {
           if (response.status) {
             this.$notifications(
-                'Approved success',
-                ``,
-                0, // success
-                true);
+              'Approved success',
+              ``,
+              0, // success
+              true);
 
             this.showApproveButton = false;
             this.$store.state.yieldAllowance = true;
@@ -212,53 +212,53 @@ export default {
       this.$loading(true);
 
       await this.walletConnector.unstakeTokens(
-          this.account,
-          process.env.VUE_APP_YIELD_CONTRACT_ETH,
-          this.contractAbi)
-          .then(() => {
-            this.$notifications(
-                'Unstaked successfully',
-                ``,
-                0, // success
-                true);
+        this.account,
+        process.env.VUE_APP_YIELD_CONTRACT_ETH,
+        this.contractAbi)
+        .then(() => {
+          this.$notifications(
+              'Unstaked successfully',
+              ``,
+              0, // success
+              true);
 
-            this.initYieldFarm();
-          }).catch((e) => {
-            console.log(`Error staking tokens: ${e.message}}`);
-            this.$notifications(
-                'Something went wrong unstaking',
-                e,
-                1, // error
-                true);
-          }).finally(() => {
-            this.$loading(false);
-          });
+          this.initYieldFarm();
+        }).catch((e) => {
+          console.log(`Error staking tokens: ${e.message}}`);
+          this.$notifications(
+              'Something went wrong unstaking',
+              e,
+              1, // error
+              true);
+        }).finally(() => {
+          this.$loading(false);
+        });
     },
     claim: async function() {
       this.$loading(true);
 
       await this.walletConnector.claimReward(
-          this.account,
-          process.env.VUE_APP_YIELD_CONTRACT_ETH,
-          this.contractAbi)
-          .then(() => {
-            this.$notifications(
-                'Reward claimed successfully',
-                ``,
-                0, // success
-                true);
+        this.account,
+        process.env.VUE_APP_YIELD_CONTRACT_ETH,
+        this.contractAbi)
+        .then(() => {
+          this.$notifications(
+            'Reward claimed successfully',
+            ``,
+            0, // success
+            true);
 
-            this.initYieldFarm();
-          }).catch((e) => {
-            console.log(`Error staking tokens: ${e.message}}`);
-            this.$notifications(
-                'Something went wrong claiming your reward',
-                e,
-                1, // error
-                true);
-          }).finally(() => {
-            this.$loading(false);
-          });
+          this.initYieldFarm();
+        }).catch((e) => {
+          console.log(`Error staking tokens: ${e.message}}`);
+          this.$notifications(
+            'Something went wrong claiming your reward',
+            e,
+            1, // error
+            true);
+        }).finally(() => {
+          this.$loading(false);
+        });
     },
     getTotalYsecStaked: async function(contractInterface) {
       const web3 = new Web3;

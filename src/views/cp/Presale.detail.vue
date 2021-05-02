@@ -335,7 +335,12 @@ export default {
         });
     },
     getTokenTicker: async function() {
-      this.presale.TokenName = await this.walletConnector.getTokenTicker(this.presale.TokenAddress, this.tokenAbi);
+      await this.walletConnector.getTokenTicker(this.presale.TokenAddress, this.tokenAbi)
+          .then((response) => {
+            this.presale.TokenName = response;
+          }).catch((e) => {
+            console.log(`Error get token ticker: ${e.message}}`);
+          });
     },
     getRoi: async function() {
       await this.walletConnector.getRoi(this.id, this.account, process.env.VUE_APP_PRESALE_CONTRACT_ETH, this.contractAbi)
@@ -349,7 +354,12 @@ export default {
       return parseInt(this.presale.Hardcap)/(parseInt(this.presale.RawTokensInPresale));
     },
     getAllowance: async function () {
-      this.allowanceState = await this.walletConnector.getAllowance(this.account, process.env.VUE_APP_PRESALE_CONTRACT_ETH, this.presale.TokenAddress, this.tokenAbi);
+      await this.walletConnector.getAllowance(this.account, process.env.VUE_APP_PRESALE_CONTRACT_ETH, this.presale.TokenAddress, this.tokenAbi)
+        .then((response) => {
+          this.allowanceState = response;
+        }).catch((e) => {
+          console.log(`Error get allowance: ${e.message}}`);
+        });
     },
     approveCall: async function () {
       this.$loading(true);
